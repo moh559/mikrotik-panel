@@ -1,0 +1,59 @@
+:root{
+  --bg:#0e1116; --panel:#161b22; --panel2:#1c2330; --line:#2a3240;
+  --txt:#e6edf3; --dim:#9aa7b5; --acc:#2f81f7; --ok:#2ea043; --warn:#d29922; --err:#f85149;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:15px/1.6 "Segoe UI",Tahoma,Arial,sans-serif}
+code{background:var(--panel2);padding:1px 6px;border-radius:6px;font-size:13px;direction:ltr;display:inline-block}
+a{color:var(--acc)}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand h1{margin:0;font-size:19px}
+.brand .sub{color:var(--dim);font-size:12.5px}
+nav{display:flex;gap:6px}
+.tab{background:transparent;border:1px solid var(--line);color:var(--dim);padding:7px 16px;border-radius:9px;cursor:pointer;font:inherit}
+.tab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+main{padding:18px;max-width:1080px;margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.toolbar label{display:flex;gap:6px;align-items:center;color:var(--dim);font-size:13.5px}
+select,input,textarea{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:8px 10px;font:inherit}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+button{font:inherit;border-radius:9px;padding:8px 16px;cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--txt)}
+button.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+button.primary:disabled{opacity:.45;cursor:not-allowed}
+button.ghost{background:transparent}
+button.danger{background:transparent;border-color:var(--err);color:var(--err)}
+a.link{padding:8px 12px;text-decoration:none;border:1px solid var(--line);border-radius:9px}
+.badge{font-size:12.5px;padding:4px 10px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--dim)}
+.badge.ok{color:var(--ok);border-color:var(--ok)}
+.badge.err{color:var(--err);border-color:var(--err)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h3{margin:0 0 6px;font-size:16px}
+.card .dim{color:var(--dim);font-size:13px}
+.card .files{margin:8px 0;padding:0;list-style:none;font-size:13px}
+.card .files li{padding:3px 0;border-bottom:1px dashed var(--line);direction:ltr;text-align:left}
+.card .actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hint{margin-top:14px;color:var(--dim);font-size:13px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+.meta{color:var(--dim);font-size:13px;margin-bottom:8px;display:flex;gap:16px;flex-wrap:wrap;direction:rtl}
+.meta b{color:var(--txt);font-weight:600}
+#editorText{width:100%;min-height:420px;direction:ltr;text-align:left;font-family:Consolas,Monaco,monospace;font-size:13.5px;line-height:1.55;resize:vertical;border-radius:12px}
+.valid{margin-top:8px;font-size:13.5px}
+.valid.ok{color:var(--ok)}
+.valid.err{color:var(--err)}
+.list .item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.list .item .dim{color:var(--dim);font-size:12.5px}
+.form{display:grid;gap:12px;max-width:640px}
+.form label{display:grid;gap:6px;color:var(--dim);font-size:13.5px}
+.form .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--panel2);border:1px solid var(--acc);color:var(--txt);padding:12px 18px;border-radius:10px;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.45);max-width:70vw}
+#toast.err{border-color:var(--err)}
+#toast.ok{border-color:var(--ok)}
+@media (max-width:720px){
+  header{flex-direction:column;align-items:stretch}
+  nav{overflow-x:auto}
+  main{padding:12px}
+  .toolbar{gap:8px}
+}
