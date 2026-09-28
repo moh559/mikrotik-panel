@@ -1,12 +1,15 @@
 window.GH = (function () {
   var API = "https://api.github.com";
 
+  var DEFAULT_CFG = { owner: "moh559", repo: "mikrotik-panel", branch: "main" };
+
   function cfg() {
     var stored = {};
     try { stored = JSON.parse(localStorage.getItem("panel_cfg") || "{}"); } catch (e) { stored = {}; }
     var seed = window.PANEL_CONFIG || {};
     var out = {};
     var k;
+    for (k in DEFAULT_CFG) out[k] = DEFAULT_CFG[k];
     for (k in seed) out[k] = seed[k];
     for (k in stored) if (stored[k]) out[k] = stored[k];
     return out;
