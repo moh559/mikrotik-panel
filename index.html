@@ -22,6 +22,7 @@
   <nav id="tabs">
     <button class="tab active" data-tab="routers">الرواتر</button>
     <button class="tab" data-tab="editor">المحرر</button>
+    <button class="tab" data-tab="portal">البوابة</button>
     <button class="tab" data-tab="history">السجل</button>
     <button class="tab" data-tab="settings">الإعدادات</button>
     <button id="btnLogout" class="tab logout"><i class="fas fa-sign-out-alt"></i> خروج</button>
@@ -60,6 +61,182 @@
     <div id="editorMeta" class="meta"></div>
     <textarea id="editorText" spellcheck="false" placeholder="محتوى الملف…"></textarea>
     <div id="editorValid" class="valid"></div>
+  </section>
+
+  <section id="tab-portal" class="page">
+    <div class="toolbar">
+      <label>الراوتر:
+        <select id="portalRouter"></select>
+      </label>
+      <button id="btnPortalReload" class="ghost">تحديث الكل</button>
+      <a id="btnPortalScript" class="ghost link" href="#">أمر السحب</a>
+      <span id="portalBadge" class="badge">—</span>
+    </div>
+    <nav class="subtabs" id="portalSubtabs">
+      <button class="subtab active" data-sub="settings">الإعدادات</button>
+      <button class="subtab" data-sub="speeds">السرعات</button>
+      <button class="subtab" data-sub="profiles">الأسعار</button>
+      <button class="subtab" data-sub="points">نقاط البيع</button>
+      <button class="subtab" data-sub="text">النص المتحرك</button>
+      <button class="subtab" data-sub="colors">الألوان</button>
+      <button class="subtab" data-sub="images">الصور</button>
+      <button class="subtab" data-sub="slots">المواضع والزينة</button>
+      <button class="subtab" data-sub="netdata">بيانات الشبكة</button>
+      <button class="subtab" data-sub="raw">JSON خام</button>
+      <button class="subtab" data-sub="status">الحالة</button>
+    </nav>
+
+    <div class="subpage active" id="p-settings">
+      <div class="toolbar">
+        <button class="primary" data-psave="settings">حفظ الإعدادات</button>
+        <span class="dim">تُحفظ في المستودع والراوتر يسحبها خلال دقيقة</span>
+      </div>
+      <div id="settingsGroups"></div>
+    </div>
+
+    <div class="subpage" id="p-speeds">
+      <div class="toolbar">
+        <button class="primary" data-psave="speeds">حفظ السرعات</button>
+        <button class="ghost" id="addSpeedRow">+ إضافة سرعة</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="speedsTable">
+          <thead><tr><th>الرفع</th><th>التنزيل</th><th>الاسم</th><th>افتراضية</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="field">
+        <label>السرعة الافتراضية المدمجة (تظهر أولاً للمستخدم)</label>
+        <select id="defaultSpeed"></select>
+      </div>
+    </div>
+
+    <div class="subpage" id="p-profiles">
+      <div class="toolbar">
+        <button class="primary" data-psave="profiles">حفظ الأسعار</button>
+        <button class="ghost" id="addProfileRow">+ إضافة باقة</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="profilesTable">
+          <thead><tr><th>الفئة (السعر)</th><th>الوقت</th><th>الرصيد</th><th>الصلاحية</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="subpage" id="p-points">
+      <div class="toolbar">
+        <button class="primary" data-psave="points">حفظ نقاط البيع</button>
+        <button class="ghost" id="addPointRow">+ إضافة نقطة</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="pointsTable">
+          <thead><tr><th>اسم نقطة البيع</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="subpage" id="p-text">
+      <div class="toolbar">
+        <button class="primary" data-psave="text">حفظ النص</button>
+      </div>
+      <textarea id="scrollText" rows="5" placeholder="نص الشريط المتحرك في أعلى الصفحة"></textarea>
+    </div>
+
+    <div class="subpage" id="p-colors">
+      <div class="toolbar">
+        <button class="primary" data-psave="colors">حفظ الألوان</button>
+        <button class="ghost" id="addColorRow">+ إضافة لون</button>
+        <button class="ghost" id="saveColorsDefault">حفظ الحالي كافتراضي</button>
+        <button class="ghost" id="restoreColors">استعادة الافتراضية</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="colorsTable">
+          <thead><tr><th>الفئة (class)</th><th>القيمة (لون أو تدرج)</th><th>معاينة / اختر لوناً</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="hint">مثال: btn_color = #173672 أو تدرج linear-gradient(...) — التدرج bd_color يبقى افتراضياً ولا يتغيّر</p>
+    </div>
+
+    <div class="subpage" id="p-images">
+      <div class="toolbar">
+        <label class="primary btn-label" for="imageInput">رفع صور (سلايدر)</label>
+        <input type="file" id="imageInput" accept="image/*" multiple hidden>
+        <span class="dim">تُرفع إلى المستودع وتُسحب للراوتر في المهمة اليومية</span>
+      </div>
+      <div id="imagesList" class="images-grid"></div>
+    </div>
+
+    <div class="subpage" id="p-slots">
+      <div class="toolbar">
+        <input type="text" id="styleNameInput" placeholder="اسم الـ style الجديد">
+        <select id="styleTheme" title="نوع الزينة">
+          <option value="none">بدون زينة</option>
+          <option value="ramadan">زينة رمضان</option>
+          <option value="mawled">زينة المولد</option>
+          <option value="eid">زينة العيد</option>
+        </select>
+        <button class="primary" id="saveStyleBtn">حفظ الـ style وتفعيله</button>
+      </div>
+      <div id="slotRows"></div>
+      <h3 class="subhead">الـ styles المحفوظة</h3>
+      <div id="stylesList"></div>
+      <p class="hint">يعمل style واحد فقط في نفس الوقت — تفعيل واحد يوقف البقية تلقائياً</p>
+    </div>
+
+    <div class="subpage" id="p-netdata">
+      <div class="toolbar">
+        <button class="primary" id="saveNetBtn">حفظ بيانات الشبكة</button>
+        <span class="dim">تُكتب داخل config/config.js مع الحفاظ على بقية الإعدادات والتعليقات</span>
+      </div>
+      <div class="form">
+        <label>اسم الشبكة (network-name)<input type="text" id="net_network-name"></label>
+        <label>عنوان الشبكة (network-title)<input type="text" id="net_network-title"></label>
+        <label>اسم الشبكة بالإنجليزية (net-name-en)<input type="text" id="net_net-name-en"></label>
+        <label>المقدمة/الاختصار (n-n)<input type="text" id="net_n-n"></label>
+        <label>رقم الخدمة (service-number)<input type="text" id="net_service-number"></label>
+        <label>شريط الخبر/الترحيب (news-line)<input type="text" id="net_news-line"></label>
+      </div>
+      <div id="netResult" class="hint"></div>
+    </div>
+
+    <div class="subpage" id="p-raw">
+      <div class="toolbar">
+        <select id="rawFileSelect"></select>
+        <button class="primary" data-psave="raw">حفظ الملف</button>
+        <a class="ghost link" id="rawDownload" href="#">تنزيل خام</a>
+      </div>
+      <textarea id="rawEditor" rows="22" spellcheck="false"></textarea>
+      <div id="rawError" class="valid err"></div>
+    </div>
+
+    <div class="subpage" id="p-status">
+      <div class="grid2">
+        <div class="card">
+          <h3>الراوتر والسحب</h3>
+          <div class="files" id="statusRouterInfo"></div>
+          <div class="actions">
+            <button id="btnStatusPullScript">تنزيل أمر السحب</button>
+            <button id="btnStatusIsolation" class="ghost">فحص العزل</button>
+          </div>
+          <div class="hint">الراوتر يسحب ملفات البيانات كل دقيقة والمهمة اليومية تجلب الصور — لا يحتاج اللوحة أن تتصل به من الخارج.</div>
+        </div>
+        <div class="card">
+          <h3>ملفات البيانات</h3>
+          <table class="table" id="filesTable">
+            <thead><tr><th>الملف</th><th>الحجم</th><th>sha</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div id="portalLastCommit" class="dim"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>حالة العزل (ملفات البوابة في المستودع)</h3>
+        <ul id="isolationList" class="checklist"></ul>
+      </div>
+    </div>
   </section>
 
   <section id="tab-history" class="page">

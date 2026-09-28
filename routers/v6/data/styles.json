@@ -1,0 +1,22 @@
+[
+  {
+    "name": "عادي (بدون زينة)",
+    "theme": "none",
+    "slots": {}
+  },
+  {
+    "name": "رمضان",
+    "theme": "ramadan",
+    "slots": {}
+  },
+  {
+    "name": "المولد",
+    "theme": "mawled",
+    "slots": {}
+  },
+  {
+    "name": "العيد",
+    "theme": "eid",
+    "slots": {}
+  }
+]

@@ -98,6 +98,40 @@ window.GH = (function () {
     return { path: data.content && data.content.path, sha: data.content && data.content.sha, commitSha: data.commit && data.commit.sha, commitUrl: data.commit && data.commit.html_url };
   }
 
+  function b64fromBytes(bytes) {
+    var bin = "";
+    var CHUNK = 0x8000;
+    for (var i = 0; i < bytes.length; i += CHUNK) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+    }
+    return btoa(bin);
+  }
+
+  async function putBinary(path, buffer, message, sha) {
+    var c = requireCfg();
+    var body = {
+      message: message || ("panel: add " + path),
+      content: b64fromBytes(new Uint8Array(buffer)),
+      branch: c.branch || "main"
+    };
+    if (sha) body.sha = sha;
+    var data = await ghFetch(contentsUrl(path), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    return { path: data.content && data.content.path, sha: data.content && data.content.sha, commitSha: data.commit && data.commit.sha };
+  }
+
+  async function deleteFile(path, sha, message) {
+    var c = requireCfg();
+    return ghFetch(contentsUrl(path), {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: message || ("panel: delete " + path), sha: sha, branch: c.branch || "main" })
+    });
+  }
+
   async function createRepo(name, autoInit) {
     return ghFetch(API + "/user/repos", {
       method: "POST",
@@ -154,6 +188,8 @@ window.GH = (function () {
     getUser: getUser,
     getFile: getFile,
     putFile: putFile,
+    putBinary: putBinary,
+    deleteFile: deleteFile,
     createRepo: createRepo,
     enablePages: enablePages,
     getPages: getPages,

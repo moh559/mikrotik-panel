@@ -11,17 +11,51 @@
         "router": "1/data/settings.json"
       },
       {
+        "repo": "routers/v6/data/speeds.json",
+        "router": "1/data/speeds.json"
+      },
+      {
+        "repo": "routers/v6/data/profiles.json",
+        "router": "1/data/profiles.json"
+      },
+      {
+        "repo": "routers/v6/data/points.json",
+        "router": "1/data/points.json"
+      },
+      {
+        "repo": "routers/v6/data/text.json",
+        "router": "1/data/text.json"
+      },
+      {
         "repo": "routers/v6/data/colors.json",
         "router": "1/data/colors.json"
       },
       {
-        "repo": "routers/v6/data/speeds.json",
-        "router": "1/data/speeds.json"
+        "repo": "routers/v6/data/colors-default.json",
+        "router": "1/data/colors-default.json"
+      },
+      {
+        "repo": "routers/v6/data/images.json",
+        "router": "1/data/images.json"
+      },
+      {
+        "repo": "routers/v6/data/slots.json",
+        "router": "1/data/slots.json"
+      },
+      {
+        "repo": "routers/v6/data/styles.json",
+        "router": "1/data/styles.json"
+      },
+      {
+        "repo": "routers/v6/config/config.js",
+        "router": "1/config/config.js"
       },
       {
         "repo": "routers/v6/conf.js",
         "router": "1/conf.js"
       }
-    ]
+    ],
+    "repoBase": "routers/v6",
+    "routerBase": "1/"
   }
 ]
