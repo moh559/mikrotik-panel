@@ -82,6 +82,7 @@
       <button class="subtab" data-sub="images">الصور</button>
       <button class="subtab" data-sub="slots">المواضع والزينة</button>
       <button class="subtab" data-sub="netdata">بيانات الشبكة</button>
+      <button class="subtab" data-sub="link">مفاتيح الارتباط</button>
       <button class="subtab" data-sub="raw">JSON خام</button>
       <button class="subtab" data-sub="status">الحالة</button>
     </nav>
@@ -200,6 +201,27 @@
         <label>شريط الخبر/الترحيب (news-line)<input type="text" id="net_news-line"></label>
       </div>
       <div id="netResult" class="hint"></div>
+    </div>
+
+    <div class="subpage" id="p-link">
+      <div class="toolbar">
+        <button class="primary" id="saveLinkBtn">حفظ link.js</button>
+        <button class="ghost" id="addLinkKey">+ إضافة مفتاح</button>
+        <button class="ghost" id="linkApplyAllBtn">تطبيق على كل الرواتر</button>
+        <span class="dim">يُحفظ في ملف منفصل link.js — الراوتر يسحبه خلال دقيقة</span>
+      </div>
+      <div class="form">
+        <label>صلة لوحة التحكم (panelUrl) — يفتحها زر «لوحة التحكم» في البوابة<input type="text" id="linkPanelUrl" placeholder="http://..."></label>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="linkKeysTable">
+          <thead><tr><th>المفتاح</th><th>القيمة</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="toolbar"><span class="dim">معاينة link.js المُولَّد:</span></div>
+      <textarea id="linkPreview" rows="8" spellcheck="false" readonly></textarea>
+      <div id="linkResult" class="hint"></div>
     </div>
 
     <div class="subpage" id="p-raw">
