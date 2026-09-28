@@ -16,6 +16,7 @@
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/data/styles.json" dst-path="1/data/styles.json"
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/config/config.js" dst-path="1/config/config.js"
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/conf.js" dst-path="1/conf.js"
+/tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/link.js" dst-path="1/link.js"
 }
 /system scheduler remove [find name=panel_pull_mohammed]
 /system scheduler add name=panel_pull_mohammed interval=1m start-time=startup comment="cloud panel pull" on-event=panel_pull_mohammed
