@@ -3,326 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة التحكم السحابية</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css">
+<title>لوحة التحكم</title>
+<link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-<div class="stars" id="stars"></div>
-
-<header>
-  <div class="brand">
-    <div class="logo-icon"><i class="fas fa-network-wired"></i></div>
-    <div>
-      <h1>لوحة التحكم السحابية</h1>
-      <span class="sub">إدارة عدة رواتر وشبكات من أي متصفح — البيانات في GitHub والراواتر تسحبها تلقائياً</span>
-    </div>
+<header class="top">
+  <div class="wrap">
+    <h1>لوحة التحكم</h1>
+    <p class="dim">عرض تفصيلي لإعدادات وتغييرات الراوترات المضافة — بدون صلاحيات تعديل.</p>
   </div>
-  <nav id="tabs">
-    <button class="tab active" data-tab="routers">الرواتر</button>
-    <button class="tab" data-tab="editor">المحرر</button>
-    <button class="tab" data-tab="portal">البوابة</button>
-    <button class="tab" data-tab="history">السجل</button>
-    <button class="tab" data-tab="settings">الإعدادات</button>
-    <button id="btnLogout" class="tab logout"><i class="fas fa-sign-out-alt"></i> خروج</button>
-  </nav>
 </header>
-
-<main>
-  <section id="tab-routers" class="page active">
-    <div class="toolbar">
-      <button id="btnAddRouter" class="primary">إضافة راوتر</button>
-      <button id="btnReloadRouters" class="ghost">تحديث من المستودع</button>
-      <button id="btnPullScript" class="ghost">تنزيل أمر السحب</button>
-      <span id="repoBadge" class="badge"></span>
-    </div>
-    <div id="routerList" class="cards"></div>
-    <div class="hint">
-      كل راوتر يسحب ملفاته من المستودع كل دقيقة عبر مهمة مجدولة داخل الراوتر نفسه
-      (<code>/tool fetch</code>) — لا يحتاج استقبال اتصالات ولا فتح منافذ.
-      نزّل أمر المهمة بزر «تنزيل أمر السحب» وأضفه في terminal الراوتر مرة واحدة.
-    </div>
+<main class="wrap">
+  <div id="errorBox" class="alert" hidden></div>
+  <section id="listView">
+    <h2 class="sect">الراوترات</h2>
+    <div id="routers" class="grid"></div>
   </section>
-
-  <section id="tab-editor" class="page">
-    <div class="toolbar">
-      <label>الراوتر:
-        <select id="editorRouter"></select>
-      </label>
-      <label>الملف:
-        <select id="editorFile"></select>
-      </label>
-      <button id="btnReloadFile" class="ghost">تحديث</button>
-      <button id="btnSaveFile" class="primary" disabled>حفظ في المستودع</button>
-      <a id="rawLink" class="ghost link" target="_blank" rel="noopener">معاينة خام</a>
-      <a id="liveLink" class="ghost link" target="_blank" rel="noopener">البوابة على الراوتر</a>
-    </div>
-    <div id="editorMeta" class="meta"></div>
-    <textarea id="editorText" spellcheck="false" placeholder="محتوى الملف…"></textarea>
-    <div id="editorValid" class="valid"></div>
-  </section>
-
-  <section id="tab-portal" class="page">
-    <div class="toolbar">
-      <label>الراوتر:
-        <select id="portalRouter"></select>
-      </label>
-      <button id="btnPortalReload" class="ghost">تحديث الكل</button>
-      <a id="btnPortalScript" class="ghost link" href="#">أمر السحب</a>
-      <span id="portalBadge" class="badge">—</span>
-    </div>
-    <nav class="subtabs" id="portalSubtabs">
-      <button class="subtab active" data-sub="settings">الإعدادات</button>
-      <button class="subtab" data-sub="speeds">السرعات</button>
-      <button class="subtab" data-sub="profiles">الأسعار</button>
-      <button class="subtab" data-sub="points">نقاط البيع</button>
-      <button class="subtab" data-sub="text">النص المتحرك</button>
-      <button class="subtab" data-sub="colors">الألوان</button>
-      <button class="subtab" data-sub="images">الصور</button>
-      <button class="subtab" data-sub="slots">المواضع والزينة</button>
-      <button class="subtab" data-sub="netdata">بيانات الشبكة</button>
-      <button class="subtab" data-sub="link">مفاتيح الارتباط</button>
-      <button class="subtab" data-sub="raw">JSON خام</button>
-      <button class="subtab" data-sub="status">الحالة</button>
-    </nav>
-
-    <div class="subpage active" id="p-settings">
-      <div class="toolbar">
-        <button class="primary" data-psave="settings">حفظ الإعدادات</button>
-        <span class="dim">تُحفظ في المستودع والراوتر يسحبها خلال دقيقة</span>
-      </div>
-      <div id="settingsGroups"></div>
-    </div>
-
-    <div class="subpage" id="p-speeds">
-      <div class="toolbar">
-        <button class="primary" data-psave="speeds">حفظ السرعات</button>
-        <button class="ghost" id="addSpeedRow">+ إضافة سرعة</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="speedsTable">
-          <thead><tr><th>الرفع</th><th>التنزيل</th><th>الاسم</th><th>افتراضية</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="field">
-        <label>السرعة الافتراضية المدمجة (تظهر أولاً للمستخدم)</label>
-        <select id="defaultSpeed"></select>
-      </div>
-    </div>
-
-    <div class="subpage" id="p-profiles">
-      <div class="toolbar">
-        <button class="primary" data-psave="profiles">حفظ الأسعار</button>
-        <button class="ghost" id="addProfileRow">+ إضافة باقة</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="profilesTable">
-          <thead><tr><th>الفئة (السعر)</th><th>الوقت</th><th>الرصيد</th><th>الصلاحية</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="subpage" id="p-points">
-      <div class="toolbar">
-        <button class="primary" data-psave="points">حفظ نقاط البيع</button>
-        <button class="ghost" id="addPointRow">+ إضافة نقطة</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="pointsTable">
-          <thead><tr><th>اسم نقطة البيع</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="subpage" id="p-text">
-      <div class="toolbar">
-        <button class="primary" data-psave="text">حفظ النص</button>
-      </div>
-      <textarea id="scrollText" rows="5" placeholder="نص الشريط المتحرك في أعلى الصفحة"></textarea>
-    </div>
-
-    <div class="subpage" id="p-colors">
-      <div class="toolbar">
-        <button class="primary" data-psave="colors">حفظ الألوان</button>
-        <button class="ghost" id="addColorRow">+ إضافة لون</button>
-        <button class="ghost" id="saveColorsDefault">حفظ الحالي كافتراضي</button>
-        <button class="ghost" id="restoreColors">استعادة الافتراضية</button>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="colorsTable">
-          <thead><tr><th>الفئة (class)</th><th>القيمة (لون أو تدرج)</th><th>معاينة / اختر لوناً</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="hint">مثال: btn_color = #173672 أو تدرج linear-gradient(...) — التدرج bd_color يبقى افتراضياً ولا يتغيّر</p>
-    </div>
-
-    <div class="subpage" id="p-images">
-      <div class="toolbar">
-        <label class="primary btn-label" for="imageInput">رفع صور (سلايدر)</label>
-        <input type="file" id="imageInput" accept="image/*" multiple hidden>
-        <span class="dim">تُرفع إلى المستودع وتُسحب للراوتر في المهمة اليومية</span>
-      </div>
-      <div id="imagesList" class="images-grid"></div>
-    </div>
-
-    <div class="subpage" id="p-slots">
-      <div class="toolbar">
-        <input type="text" id="styleNameInput" placeholder="اسم الـ style الجديد">
-        <select id="styleTheme" title="نوع الزينة">
-          <option value="none">بدون زينة</option>
-          <option value="ramadan">زينة رمضان</option>
-          <option value="mawled">زينة المولد</option>
-          <option value="eid">زينة العيد</option>
-        </select>
-        <button class="primary" id="saveStyleBtn">حفظ الـ style وتفعيله</button>
-      </div>
-      <div id="slotRows"></div>
-      <h3 class="subhead">الـ styles المحفوظة</h3>
-      <div id="stylesList"></div>
-      <p class="hint">يعمل style واحد فقط في نفس الوقت — تفعيل واحد يوقف البقية تلقائياً</p>
-    </div>
-
-    <div class="subpage" id="p-netdata">
-      <div class="toolbar">
-        <button class="primary" id="saveNetBtn">حفظ بيانات الشبكة</button>
-        <span class="dim">تُكتب داخل config/config.js مع الحفاظ على بقية الإعدادات والتعليقات</span>
-      </div>
-      <div class="form">
-        <label>اسم الشبكة (network-name)<input type="text" id="net_network-name"></label>
-        <label>عنوان الشبكة (network-title)<input type="text" id="net_network-title"></label>
-        <label>اسم الشبكة بالإنجليزية (net-name-en)<input type="text" id="net_net-name-en"></label>
-        <label>المقدمة/الاختصار (n-n)<input type="text" id="net_n-n"></label>
-        <label>رقم الخدمة (service-number)<input type="text" id="net_service-number"></label>
-        <label>شريط الخبر/الترحيب (news-line)<input type="text" id="net_news-line"></label>
-      </div>
-      <div id="netResult" class="hint"></div>
-    </div>
-
-    <div class="subpage" id="p-link">
-      <div class="toolbar">
-        <button class="primary" id="saveLinkBtn">حفظ link.js</button>
-        <button class="ghost" id="addLinkKey">+ إضافة مفتاح</button>
-        <button class="ghost" id="linkApplyAllBtn">تطبيق على كل الرواتر</button>
-        <span class="dim">يُحفظ في ملف منفصل link.js — الراوتر يسحبه خلال دقيقة</span>
-      </div>
-      <div class="form">
-        <label>صلة لوحة التحكم (panelUrl) — يفتحها زر «لوحة التحكم» في البوابة<input type="text" id="linkPanelUrl" placeholder="http://..."></label>
-      </div>
-      <div class="table-wrap">
-        <table class="table" id="linkKeysTable">
-          <thead><tr><th>المفتاح</th><th>القيمة</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="toolbar"><span class="dim">معاينة link.js المُولَّد:</span></div>
-      <textarea id="linkPreview" rows="8" spellcheck="false" readonly></textarea>
-      <div id="linkResult" class="hint"></div>
-    </div>
-
-    <div class="subpage" id="p-raw">
-      <div class="toolbar">
-        <select id="rawFileSelect"></select>
-        <button class="primary" data-psave="raw">حفظ الملف</button>
-        <a class="ghost link" id="rawDownload" href="#">تنزيل خام</a>
-      </div>
-      <textarea id="rawEditor" rows="22" spellcheck="false"></textarea>
-      <div id="rawError" class="valid err"></div>
-    </div>
-
-    <div class="subpage" id="p-status">
-      <div class="grid2">
-        <div class="card">
-          <h3>الراوتر والسحب</h3>
-          <div class="files" id="statusRouterInfo"></div>
-          <div class="actions">
-            <button id="btnStatusPullScript">تنزيل أمر السحب</button>
-            <button id="btnStatusIsolation" class="ghost">فحص العزل</button>
-          </div>
-          <div class="hint">الراوتر يسحب ملفات البيانات كل دقيقة والمهمة اليومية تجلب الصور — لا يحتاج اللوحة أن تتصل به من الخارج.</div>
-        </div>
-        <div class="card">
-          <h3>ملفات البيانات</h3>
-          <table class="table" id="filesTable">
-            <thead><tr><th>الملف</th><th>الحجم</th><th>sha</th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <div id="portalLastCommit" class="dim"></div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:14px">
-        <h3>حالة العزل (ملفات البوابة في المستودع)</h3>
-        <ul id="isolationList" class="checklist"></ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="tab-history" class="page">
-    <div class="toolbar">
-      <label>الراوتر:
-        <select id="historyRouter"></select>
-      </label>
-      <label>الملف:
-        <select id="historyFile"></select>
-      </label>
-      <button id="btnLoadHistory" class="primary">عرض السجل</button>
-    </div>
-    <div id="historyList" class="list"></div>
-  </section>
-
-  <section id="tab-settings" class="page">
-    <div class="form">
-      <label>مالك المستودع (GitHub username)
-        <input id="cfgOwner" placeholder="moh559">
-      </label>
-      <label>اسم المستودع
-        <input id="cfgRepo" placeholder="mikrotik-panel">
-      </label>
-      <label>الفرع
-        <input id="cfgBranch" placeholder="main">
-      </label>
-      <label>رمز الوصول (Personal Access Token)
-        <input id="cfgToken" type="password" autocomplete="off" placeholder="ghp_… أو github_pat_…">
-      </label>
-      <div class="row">
-        <button id="btnSaveCfg" class="primary">حفظ الإعدادات</button>
-        <button id="btnTestCfg" class="ghost">اختبار الاتصال</button>
-        <button id="btnInitRepo" class="ghost">تهيئة المستودع وتفعيل Pages</button>
-        <span id="cfgStatus" class="badge"></span>
-      </div>
-      <div class="hint">
-        الرمز يُحفظ في متصفحك فقط ولا يُرسل إلا إلى GitHub.
-        أنشئ رمزاً: Settings ← Developer settings ← Personal access tokens ← <b>Tokens (classic)</b> ← صلاحية ☑ <code>repo</code>
-        (الكلاسيكي مطلوب لزر التهيئة لأن الرموز الدقيقة لا تنشئ مستودعات).
-        زر التهيئة ينشئ المستودع العام وملف السجل ويفعّل Pages تلقائياً.
-        بدون رمز يمكنك القراءة فقط (60 طلباً في الساعة)، ومع الرمز 5000.
-      </div>
-    </div>
+  <section id="detailView" hidden>
+    <button id="backBtn" class="btn ghost" type="button">رجوع للقائمة</button>
+    <div id="detailHead"></div>
+    <div id="dataGrid" class="grid"></div>
+    <section class="sect-box">
+      <h2 class="sect">آخر التغييرات</h2>
+      <ul id="changes" class="changes"><li class="dim">…</li></ul>
+    </section>
   </section>
 </main>
-
-<div id="toast" hidden></div>
-<script>
-(function () {
-  var i;
-  var sc = document.getElementById("stars");
-  for (i = 0; i < 50; i++) {
-    var st = document.createElement("div");
-    st.className = "star";
-    st.style.left = Math.random() * 100 + "%";
-    st.style.top = Math.random() * 100 + "%";
-    st.style.animationDelay = Math.random() * 3 + "s";
-    st.style.animationDuration = (2 + Math.random() * 3) + "s";
-    sc.appendChild(st);
-  }
-})();
-</script>
-<script src="config.local.js"></script>
-<script src="js/github.js"></script>
-<script src="js/app.js"></script>
+<footer class="foot wrap">
+  <span id="footInfo" class="dim"></span>
+</footer>
+<script src="js/dashboard.js"></script>
 </body>
 </html>
