@@ -4,19 +4,27 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>لوحة التحكم السحابية</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<div class="stars" id="stars"></div>
+
 <header>
   <div class="brand">
-    <h1>لوحة التحكم السحابية</h1>
-    <span class="sub">إدارة عدة رواتر وشبكات من أي متصفح — البيانات في GitHub والراواتر تسحبها تلقائياً</span>
+    <div class="logo-icon"><i class="fas fa-network-wired"></i></div>
+    <div>
+      <h1>لوحة التحكم السحابية</h1>
+      <span class="sub">إدارة عدة رواتر وشبكات من أي متصفح — البيانات في GitHub والراواتر تسحبها تلقائياً</span>
+    </div>
   </div>
   <nav id="tabs">
     <button class="tab active" data-tab="routers">الرواتر</button>
     <button class="tab" data-tab="editor">المحرر</button>
     <button class="tab" data-tab="history">السجل</button>
     <button class="tab" data-tab="settings">الإعدادات</button>
+    <button id="btnLogout" class="tab logout"><i class="fas fa-sign-out-alt"></i> خروج</button>
   </nav>
 </header>
 
@@ -32,7 +40,7 @@
     <div class="hint">
       كل راوتر يسحب ملفاته من المستودع كل دقيقة عبر مهمة مجدولة داخل الراوتر نفسه
       (<code>/tool fetch</code>) — لا يحتاج استقبال اتصالات ولا فتح منافذ.
-      مثال لمهمة السحب: <a href="deploy/v6-panel-pull.rsc" target="_blank">v6-panel-pull.rsc</a>
+      نزّل أمر المهمة بزر «تنزيل أمر السحب» وأضفه في terminal الراوتر مرة واحدة.
     </div>
   </section>
 
@@ -99,6 +107,21 @@
 </main>
 
 <div id="toast" hidden></div>
+<script>
+(function () {
+  var i;
+  var sc = document.getElementById("stars");
+  for (i = 0; i < 50; i++) {
+    var st = document.createElement("div");
+    st.className = "star";
+    st.style.left = Math.random() * 100 + "%";
+    st.style.top = Math.random() * 100 + "%";
+    st.style.animationDelay = Math.random() * 3 + "s";
+    st.style.animationDuration = (2 + Math.random() * 3) + "s";
+    sc.appendChild(st);
+  }
+})();
+</script>
 <script src="config.local.js"></script>
 <script src="js/github.js"></script>
 <script src="js/app.js"></script>
