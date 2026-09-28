@@ -1,30 +1,5 @@
 [
   {
-    "id": "v6",
-    "name": "الراوتر القديم v6",
-    "host": "50.50.0.1",
-    "network": "شبكة 50.50.0.0/24",
-    "portal": "http://50.50.0.1/1/",
-    "files": [
-      {
-        "repo": "routers/v6/data/settings.json",
-        "router": "1/data/settings.json"
-      },
-      {
-        "repo": "routers/v6/data/colors.json",
-        "router": "1/data/colors.json"
-      },
-      {
-        "repo": "routers/v6/data/speeds.json",
-        "router": "1/data/speeds.json"
-      },
-      {
-        "repo": "routers/v6/conf.js",
-        "router": "1/conf.js"
-      }
-    ]
-  },
-  {
     "id": "v7",
     "name": "الراوتر الجديد v7",
     "host": "192.168.50.1",
