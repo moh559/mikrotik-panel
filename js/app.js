@@ -21,7 +21,8 @@
         { repo: "routers/v6/data/slots.json", router: "1/data/slots.json" },
         { repo: "routers/v6/data/styles.json", router: "1/data/styles.json" },
         { repo: "routers/v6/config/config.js", router: "1/config/config.js" },
-        { repo: "routers/v6/conf.js", router: "1/conf.js" }
+        { repo: "routers/v6/conf.js", router: "1/conf.js" },
+        { repo: "routers/v6/link.js", router: "1/link.js" }
       ]
     },
     {
@@ -541,7 +542,7 @@
   ];
   var ISO_PATTERNS = ["hotspot.alnooah.pro", "read_pass=", "network_id=", "corenotion.io", "unpkg.com", "cdn.jsdelivr.net", "qr_api"];
 
-  var pState = {}, pShas = {}, pConfigText = "", pConfigSha = null, pLoaded = false, pLoading = false;
+  var pState = {}, pShas = {}, pConfigText = "", pConfigSha = null, pLinkText = "", pLinkSha = null, pLoaded = false, pLoading = false;
 
   function qsa(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
   function pBase() { return repoBaseOf(currentRouter("portalRouter")); }
@@ -575,6 +576,13 @@
       } catch (e) {
         if (e.status !== 404) throw e;
         pConfigText = ""; pConfigSha = null;
+      }
+      try {
+        var lf = await GH.getFile(base + "/link.js");
+        pLinkText = lf.content; pLinkSha = lf.sha;
+      } catch (e) {
+        if (e.status !== 404) throw e;
+        pLinkText = ""; pLinkSha = null;
       }
       portalDefaults();
       renderPortalAll();
@@ -616,6 +624,7 @@
     renderSlots();
     renderStyles();
     loadNetData();
+    loadLinkData();
     renderRawSelect();
   }
 
@@ -637,6 +646,9 @@
       var dst = pDst();
       var lines = names.map(function (n) {
         return '/tool fetch url="' + GH.rawUrl(base + "/img/" + n) + '" dst-path="' + dst + "img/" + n + '"';
+      });
+      ["index.html", "javascript/cg.js"].forEach(function (rel) {
+        lines.push('/tool fetch url="' + GH.rawUrl(base + "/portal/" + rel) + '" dst-path="' + dst + rel + '"');
       });
       var path = base + "/deploy/assets.rsc";
       var sha = null;
@@ -1178,6 +1190,102 @@
     }
   }
 
+  /* ---- مفاتيح الارتباط (link.js — ملف منفصل) ---- */
+
+  function genLinkJs(panelUrl, keys) {
+    var out = [];
+    out.push("// مفاتيح الارتباط — تُولَّد من اللوحة السحابية (تبويب: مفاتيح الارتباط)");
+    out.push("window.panelUrl = " + JSON.stringify(String(panelUrl || "")) + ";");
+    out.push("window.linkKeys = " + JSON.stringify(keys || {}, null, 2) + ";");
+    return out.join("\n") + "\n";
+  }
+
+  function parseLinkJs(text) {
+    var out = { panelUrl: "", keys: {} };
+    if (!text) return out;
+    var m = text.match(/window\.panelUrl\s*=\s*"((?:[^"\\]|\\.)*)"\s*;/);
+    if (m) { try { out.panelUrl = JSON.parse('"' + m[1] + '"'); } catch (e) { out.panelUrl = m[1]; } }
+    var k = text.match(/window\.linkKeys\s*=\s*(\{[\s\S]*\})\s*;/);
+    if (k) { try { out.keys = JSON.parse(k[1]); } catch (e) {} }
+    return out;
+  }
+
+  function linkKeyRow(k, v) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td><input type="text" class="link-k"></td><td><input type="text" class="link-v"></td><td><button class="ghost link-del">حذف</button></td>';
+    tr.querySelector(".link-k").value = k || "";
+    tr.querySelector(".link-v").value = v || "";
+    tr.querySelector(".link-del").onclick = function () { tr.parentNode.removeChild(tr); updateLinkPreview(); };
+    tr.querySelector(".link-k").oninput = updateLinkPreview;
+    tr.querySelector(".link-v").oninput = updateLinkPreview;
+    return tr;
+  }
+
+  function collectLink() {
+    var keys = {};
+    qsa("#linkKeysTable tbody tr").forEach(function (tr) {
+      var k = (tr.querySelector(".link-k").value || "").trim();
+      if (k) keys[k] = tr.querySelector(".link-v").value;
+    });
+    return { panelUrl: ($("linkPanelUrl").value || "").trim(), keys: keys };
+  }
+
+  function updateLinkPreview() {
+    var d = collectLink();
+    $("linkPreview").value = genLinkJs(d.panelUrl, d.keys);
+  }
+
+  function loadLinkData() {
+    var d = parseLinkJs(pLinkText);
+    $("linkPanelUrl").value = d.panelUrl;
+    var tb = $("linkKeysTable").querySelector("tbody");
+    tb.innerHTML = "";
+    Object.keys(d.keys).forEach(function (k) { tb.appendChild(linkKeyRow(k, d.keys[k])); });
+    updateLinkPreview();
+  }
+
+  async function saveLinkData() {
+    var base = pBase();
+    if (!base) { toast("لا يوجد مسار بوابة (repoBase) للراوتر", "err"); return; }
+    var btn = $("saveLinkBtn");
+    var d = collectLink();
+    var text = genLinkJs(d.panelUrl, d.keys);
+    btn.disabled = true;
+    try {
+      var res = await GH.putFile(base + "/link.js", text, "panel: update link.js", pLinkSha || null);
+      pLinkSha = res.sha;
+      pLinkText = text;
+      $("linkResult").textContent = "آخر حفظ: " + new Date().toLocaleTimeString();
+      toast("حُفظ link.js — الراوتر سحبه خلال دقيقة", "ok");
+    } catch (e) {
+      toast("فشل الحفظ: " + e.message, "err");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function applyLinkAll() {
+    var d = collectLink();
+    var text = genLinkJs(d.panelUrl, d.keys);
+    var targets = routers.filter(function (r) { return repoBaseOf(r); });
+    if (!targets.length) { toast("لا توجد رواتر بمسار بوابة", "err"); return; }
+    if (!confirm("تطبيق link.js على " + targets.length + " راوتر؟")) return;
+    var btn = $("linkApplyAllBtn");
+    btn.disabled = true;
+    var done = 0, fail = 0;
+    for (var i = 0; i < targets.length; i++) {
+      var base = repoBaseOf(targets[i]);
+      try {
+        var sha = null;
+        try { sha = (await GH.getFile(base + "/link.js")).sha; } catch (e) { if (e.status !== 404) throw e; }
+        await GH.putFile(base + "/link.js", text, "panel: apply link.js (" + (targets[i].name || base) + ")", sha);
+        done++;
+      } catch (e) { fail++; }
+    }
+    btn.disabled = false;
+    toast("اكتمل التطبيق: " + done + " ✓" + (fail ? " — فشل " + fail : ""), fail ? "err" : "ok");
+  }
+
   /* ---- JSON خام ---- */
 
   function renderRawSelect() {
@@ -1352,6 +1460,10 @@
     };
     $("saveStyleBtn").onclick = saveStyle;
     $("saveNetBtn").onclick = saveNetData;
+    $("saveLinkBtn").onclick = saveLinkData;
+    $("addLinkKey").onclick = function () { $("linkKeysTable").querySelector("tbody").appendChild(linkKeyRow("", "")); updateLinkPreview(); };
+    $("linkApplyAllBtn").onclick = applyLinkAll;
+    $("linkPanelUrl").oninput = updateLinkPreview;
     $("rawFileSelect").onchange = loadRaw;
   }
 
