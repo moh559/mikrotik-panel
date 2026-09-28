@@ -405,9 +405,14 @@
     $("btnTestCfg").onclick = testSettings;
     $("btnInitRepo").onclick = initRepo;
     $("btnPullScript").onclick = downloadPullScript;
+    $("btnLogout").onclick = function () {
+      localStorage.removeItem("panel_auth");
+      location.href = "login.html";
+    };
   }
 
   async function boot() {
+    if (!localStorage.getItem("panel_auth")) { location.href = "login.html"; return; }
     wire();
     fillSettingsForm();
     updateRepoBadge();
@@ -415,7 +420,12 @@
     await loadRegistry(false);
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function start() {
     boot().catch(function (e) { console.error(e); });
-  });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
 })();
