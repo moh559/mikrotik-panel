@@ -1,0 +1,11 @@
+{
+  "speeds": [
+    {
+      "upload": "2M",
+      "download": "8M",
+      "name": "Ø³Ø±Ø¹Ù‡ Ø¹Ø§Ù„ÙŠØ© 8 Ù…ÙŠØ¬Ø§",
+      "is_default": 1
+    }
+  ],
+  "default_builtin_speed": "2M/8M"
+}
