@@ -2,8 +2,14 @@ window.GH = (function () {
   var API = "https://api.github.com";
 
   function cfg() {
-    try { return JSON.parse(localStorage.getItem("panel_cfg") || "{}"); }
-    catch (e) { return {}; }
+    var stored = {};
+    try { stored = JSON.parse(localStorage.getItem("panel_cfg") || "{}"); } catch (e) { stored = {}; }
+    var seed = window.PANEL_CONFIG || {};
+    var out = {};
+    var k;
+    for (k in seed) out[k] = seed[k];
+    for (k in stored) if (stored[k]) out[k] = stored[k];
+    return out;
   }
 
   function baseHeaders() {
