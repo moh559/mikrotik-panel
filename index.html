@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة التحكم السحابية</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>لوحة التحكم السحابية</h1>
+    <span class="sub">إدارة عدة رواتر وشبكات من أي متصفح — البيانات في GitHub والراواتر تسحبها تلقائياً</span>
+  </div>
+  <nav id="tabs">
+    <button class="tab active" data-tab="routers">الرواتر</button>
+    <button class="tab" data-tab="editor">المحرر</button>
+    <button class="tab" data-tab="history">السجل</button>
+    <button class="tab" data-tab="settings">الإعدادات</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-routers" class="page active">
+    <div class="toolbar">
+      <button id="btnAddRouter" class="primary">إضافة راوتر</button>
+      <button id="btnReloadRouters" class="ghost">تحديث من المستودع</button>
+      <button id="btnPullScript" class="ghost">تنزيل أمر السحب</button>
+      <span id="repoBadge" class="badge"></span>
+    </div>
+    <div id="routerList" class="cards"></div>
+    <div class="hint">
+      كل راوتر يسحب ملفاته من المستودع كل دقيقة عبر مهمة مجدولة داخل الراوتر نفسه
+      (<code>/tool fetch</code>) — لا يحتاج استقبال اتصالات ولا فتح منافذ.
+      مثال لمهمة السحب: <a href="deploy/v6-panel-pull.rsc" target="_blank">v6-panel-pull.rsc</a>
+    </div>
+  </section>
+
+  <section id="tab-editor" class="page">
+    <div class="toolbar">
+      <label>الراوتر:
+        <select id="editorRouter"></select>
+      </label>
+      <label>الملف:
+        <select id="editorFile"></select>
+      </label>
+      <button id="btnReloadFile" class="ghost">تحديث</button>
+      <button id="btnSaveFile" class="primary" disabled>حفظ في المستودع</button>
+      <a id="rawLink" class="ghost link" target="_blank" rel="noopener">معاينة خام</a>
+      <a id="liveLink" class="ghost link" target="_blank" rel="noopener">البوابة على الراوتر</a>
+    </div>
+    <div id="editorMeta" class="meta"></div>
+    <textarea id="editorText" spellcheck="false" placeholder="محتوى الملف…"></textarea>
+    <div id="editorValid" class="valid"></div>
+  </section>
+
+  <section id="tab-history" class="page">
+    <div class="toolbar">
+      <label>الراوتر:
+        <select id="historyRouter"></select>
+      </label>
+      <label>الملف:
+        <select id="historyFile"></select>
+      </label>
+      <button id="btnLoadHistory" class="primary">عرض السجل</button>
+    </div>
+    <div id="historyList" class="list"></div>
+  </section>
+
+  <section id="tab-settings" class="page">
+    <div class="form">
+      <label>مالك المستودع (GitHub username)
+        <input id="cfgOwner" placeholder="aymanalnooah">
+      </label>
+      <label>اسم المستودع
+        <input id="cfgRepo" placeholder="mikrotik_dev">
+      </label>
+      <label>الفرع
+        <input id="cfgBranch" placeholder="main">
+      </label>
+      <label>رمز الوصول (Personal Access Token)
+        <input id="cfgToken" type="password" autocomplete="off" placeholder="ghp_… أو github_pat_…">
+      </label>
+      <div class="row">
+        <button id="btnSaveCfg" class="primary">حفظ الإعدادات</button>
+        <button id="btnTestCfg" class="ghost">اختبار الاتصال</button>
+        <button id="btnInitRepo" class="ghost">تهيئة المستودع وتفعيل Pages</button>
+        <span id="cfgStatus" class="badge"></span>
+      </div>
+      <div class="hint">
+        الرمز يُحفظ في متصفحك فقط ولا يُرسل إلا إلى GitHub.
+        أنشئ رمزاً: Settings ← Developer settings ← Personal access tokens ← <b>Tokens (classic)</b> ← صلاحية ☑ <code>repo</code>
+        (الكلاسيكي مطلوب لزر التهيئة لأن الرموز الدقيقة لا تنشئ مستودعات).
+        زر التهيئة ينشئ المستودع العام وملف السجل ويفعّل Pages تلقائياً.
+        بدون رمز يمكنك القراءة فقط (60 طلباً في الساعة)، ومع الرمز 5000.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" hidden></div>
+<script src="js/github.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
