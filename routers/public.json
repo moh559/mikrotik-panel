@@ -1,0 +1,28 @@
+{
+  "generated": "2026-09-28T16:49:35.027Z",
+  "routers": [
+    {
+      "id": "mohammed",
+      "name": "محمد",
+      "network": "50.50.0.0/24",
+      "portal": "http://50.50.0.1/1/",
+      "repoBase": "routers/v6",
+      "routerBase": "1/",
+      "files": [
+        "routers/v6/data/settings.json",
+        "routers/v6/data/speeds.json",
+        "routers/v6/data/profiles.json",
+        "routers/v6/data/points.json",
+        "routers/v6/data/text.json",
+        "routers/v6/data/colors.json",
+        "routers/v6/data/colors-default.json",
+        "routers/v6/data/images.json",
+        "routers/v6/data/slots.json",
+        "routers/v6/data/styles.json",
+        "routers/v6/config/config.js",
+        "routers/v6/conf.js",
+        "routers/v6/link.js"
+      ]
+    }
+  ]
+}
