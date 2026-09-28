@@ -53,6 +53,10 @@
       {
         "repo": "routers/v6/conf.js",
         "router": "1/conf.js"
+      },
+      {
+        "repo": "routers/v6/link.js",
+        "router": "1/link.js"
       }
     ],
     "repoBase": "routers/v6",
