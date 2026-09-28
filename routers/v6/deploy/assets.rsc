@@ -2,3 +2,5 @@
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/img/202966.png" dst-path="1/img/202966.png"
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/img/ramadan1.png" dst-path="1/img/ramadan1.png"
 /tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/img/ramadan18.png" dst-path="1/img/ramadan18.png"
+/tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/portal/index.html" dst-path="1/index.html"
+/tool fetch url="https://raw.githubusercontent.com/moh559/mikrotik-panel/main/routers/v6/portal/javascript/cg.js" dst-path="1/javascript/cg.js"
